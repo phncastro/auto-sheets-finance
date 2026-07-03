@@ -1,7 +1,7 @@
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from app.models import Transaction
+from app.models import Transacao
 
 @csrf_exempt
 def receber_transacao(request):
@@ -23,7 +23,7 @@ def receber_transacao(request):
 
         app = data.get("app")
         
-        transacao = Transaction(
+        transacao = Transacao(
             texto=texto,
             banco=app
             )
