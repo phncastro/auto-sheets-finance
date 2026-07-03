@@ -28,6 +28,8 @@
 
 '''
 
+from app.models import Transacao
+from app.core.enums import TipoTransacao, Banco
 import re
 
 class SicoobParser:
@@ -46,13 +48,13 @@ class SicoobParser:
         regex_tipo_pix_recebido = r"Pix\s+de\s+R\$.*?foi\s+recebido"
         
         if re.search(regex_tipo_credito, transação):
-            return 'CRÉDITO'
+            return TipoTransacao.CREDITO
         elif re.search(regex_tipo_debito, transação):
-            return 'DÉBITO'
+            return TipoTransacao.DEBITO
         elif re.search(regex_tipo_pix_enviado, transação):
-            return 'PIX ENVIADO'
+            return TipoTransacao.PIX_ENVIADO
         elif re.search(regex_tipo_pix_recebido, transação):
-            return 'PIX RECEBIDO'
+            return TipoTransacao.PIX_RECEBIDO
 
         return 'Error: Tipo não identificado'
     
@@ -68,29 +70,28 @@ class SicoobParser:
 
         self.tipo = self.identificar_tipo()
 
-        if self.tipo == 'CRÉDITO':
+        if self.tipo == TipoTransacao.CREDITO:
             self.valor = re.search(regex_valor, transação).group()                      # /// TRATAR None
             self.descricao = re.search(regex_estabelecimento, transação).group()        # /// TRATAR None
-            self.banco = 'Sicoob'
+            self.banco = Banco.SICOOB
 
-        elif self.tipo == 'DÉBITO':
+        elif self.tipo == TipoTransacao.DEBITO:
             self.valor = re.search(regex_valor, transação).group()                      # /// TRATAR None
             self.descricao = re.search(regex_estabelecimento, transação).group()        # /// TRATAR None
-            self.banco = 'Sicoob'
+            self.banco = Banco.SICOOB
 
-        elif self.tipo == 'PIX ENVIADO':
+        elif self.tipo == TipoTransacao.PIX_ENVIADO:
             self.valor = re.search(regex_valor_pix, transação).group()                  # /// TRATAR None
             self.descricao = re.search(regex_destinatario, transação).group()           # /// TRATAR None
-            self.banco = 'Sicoob'
+            self.banco = Banco.SICOOB
 
-        elif self.tipo == 'PIX RECEBIDO':
+        elif self.tipo == TipoTransacao.PIX_RECEBIDO:
             self.valor = re.search(regex_valor_pix, transação).group()                  # /// TRATAR None
             self.descricao = re.search(regex_remetente, transação).group()              # /// TRATAR None
-            self.banco = 'Sicoob'
+            self.banco = Banco.SICOOB
 
-        return  {
-            'tipo': self.tipo,
-            'valor': self.valor,
-            'descricao': self.descricao,
-            'banco': self.banco
-        }
+        transacao = Transacao(self.tipo, self.valor, self.descricao, self.banco)
+                
+        return transacao
+
+  

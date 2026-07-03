@@ -21,7 +21,8 @@
     DA SILVA, da instituição CAIXA ECONOMICA
     FEDERAL
 '''
-
+from app.models import Transacao
+from app.core.enums import TipoTransacao, Banco
 import re
 
 class BradescoParser:
@@ -39,11 +40,11 @@ class BradescoParser:
         regex_tipo_pix_recebido = r"Você\s+recebeu\s+um\s+Pix"
         
         if re.search(regex_tipo_credito, transação):
-            return 'CRÉDITO'
+            return TipoTransacao.CREDITO
         elif re.search(regex_tipo_pix_enviado, transação):
-            return 'PIX ENVIADO'
+            return TipoTransacao.PIX_ENVIADO
         elif re.search(regex_tipo_pix_recebido, transação):
-            return 'PIX RECEBIDO'
+            return TipoTransacao.PIX_RECEBIDO
 
         return 'Error: Tipo não identificado'
 
@@ -56,27 +57,24 @@ class BradescoParser:
         regex_destinatario_pix = r"para\s+a\s+conta\s+de\s+(.*?),\s+na\s+Instituição"
         regex_remetente_pix = r"para\s+a\s+conta\s+de\s+(.*?),\s+da\s+instituição"
 
-        self.tipo = self.identificar_tipo()
+        self.tipo = self.identificar_tipo(transação)
 
-        if self.tipo == 'CRÉDITO':
+        if self.tipo == TipoTransacao.CREDITO:
             self.valor = re.search(regex_valor_credito, transação).group()              # /// TRATAR None
             self.descricao = re.search(regex_estabelecimento, transação).group()        # /// TRATAR None
-            self.banco = 'Bradesco'
+            self.banco = Banco.BRADESCO
 
-        elif self.tipo == 'PIX ENVIADO':
+        elif self.tipo == TipoTransacao.PIX_ENVIADO:
             self.valor = re.search(regex_valor_pix, transação).group()                  # /// TRATAR None
             self.descricao = re.search(regex_destinatario_pix, transação).group()       # /// TRATAR None
-            self.banco = 'Bradesco'
+            self.banco = Banco.BRADESCO
 
-        elif self.tipo == 'PIX RECEBIDO':
+        elif self.tipo == TipoTransacao.PIX_RECEBIDO:
             self.valor = re.search(regex_valor_pix, transação).group()                  # /// TRATAR None
             self.descricao = re.search(regex_remetente_pix, transação).group()          # /// TRATAR None
-            self.banco = 'Bradesco'
+            self.banco = Banco.BRADESCO
 
-        return  {
-            'tipo': self.tipo,
-            'valor': self.valor,
-            'descricao': self.descricao,
-            'banco': self.banco
-        }
+        transacao = Transacao(self.tipo, self.valor, self.descricao, self.banco)
+        
+        return transacao
 
