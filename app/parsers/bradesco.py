@@ -22,7 +22,7 @@
     FEDERAL
 '''
 from app.models import Transacao
-from app.core.enums import TipoTransacao, Banco
+from app.core.enums import TipoTransacao, Banco, RegexTiposBradesco, RegexDadosBradesco
 import re
 
 class BradescoParser:
@@ -33,45 +33,35 @@ class BradescoParser:
         self.descricao = descricao
         self.banco = banco
 
-    def identificar_tipo(self, transação):
-
-        regex_tipo_credito = r"COMPRA\s+APROVADA"
-        regex_tipo_pix_enviado = r"Você\s+enviou\s+um\s+Pix"
-        regex_tipo_pix_recebido = r"Você\s+recebeu\s+um\s+Pix"
+    def identificar_tipo(self, transação) -> TipoTransacao:
         
-        if re.search(regex_tipo_credito, transação):
+        if re.search(RegexTiposBradesco.CREDITO, transação):
             return TipoTransacao.CREDITO
-        elif re.search(regex_tipo_pix_enviado, transação):
+        elif re.search(RegexTiposBradesco.PIX_ENVIADO, transação):
             return TipoTransacao.PIX_ENVIADO
-        elif re.search(regex_tipo_pix_recebido, transação):
+        elif re.search(RegexTiposBradesco.PIX_RECEBIDO, transação):
             return TipoTransacao.PIX_RECEBIDO
 
-        return 'Error: Tipo não identificado'
+        return 'Error: Tipo não identificado'                                           # /// TRATAR NOTIFICAÇÕES DIFERENTES
 
 
-    def realizar_parse(self, transação):
-
-        regex_valor_credito = r"VALOR\s+R\$\s*(\d+(?:\.\d{3})*,\d{2})"
-        regex_estabelecimento = r"VALOR\s+R\$\s*\d+(?:\.\d{3})*,\d{2}\s*(.*?)\s*LIMITE\s+DISP"
-        regex_valor_pix = r"Pix\s+de\s+R\$\s*(\d+(?:\.\d{3})*,\d{2})"
-        regex_destinatario_pix = r"para\s+a\s+conta\s+de\s+(.*?),\s+na\s+Instituição"
-        regex_remetente_pix = r"para\s+a\s+conta\s+de\s+(.*?),\s+da\s+instituição"
+    def realizar_parse(self, transação) -> Transacao:
 
         self.tipo = self.identificar_tipo(transação)
 
         if self.tipo == TipoTransacao.CREDITO:
-            self.valor = re.search(regex_valor_credito, transação).group()              # /// TRATAR None
-            self.descricao = re.search(regex_estabelecimento, transação).group()        # /// TRATAR None
+            self.valor = re.search(RegexDadosBradesco.VALOR_CARTAO, transação).group()              # /// TRATAR None
+            self.descricao = re.search(RegexDadosBradesco.ESTABELECIMENTO, transação).group()        # /// TRATAR None
             self.banco = Banco.BRADESCO
 
         elif self.tipo == TipoTransacao.PIX_ENVIADO:
-            self.valor = re.search(regex_valor_pix, transação).group()                  # /// TRATAR None
-            self.descricao = re.search(regex_destinatario_pix, transação).group()       # /// TRATAR None
+            self.valor = re.search(RegexDadosBradesco.VALOR_PIX, transação).group()                  # /// TRATAR None
+            self.descricao = re.search(RegexDadosBradesco.DESTINATARIO, transação).group()       # /// TRATAR None
             self.banco = Banco.BRADESCO
 
         elif self.tipo == TipoTransacao.PIX_RECEBIDO:
-            self.valor = re.search(regex_valor_pix, transação).group()                  # /// TRATAR None
-            self.descricao = re.search(regex_remetente_pix, transação).group()          # /// TRATAR None
+            self.valor = re.search(RegexDadosBradesco.VALOR_PIX, transação).group()                  # /// TRATAR None
+            self.descricao = re.search(RegexDadosBradesco.REMETENTE, transação).group()          # /// TRATAR None
             self.banco = Banco.BRADESCO
 
         transacao = Transacao(self.tipo, self.valor, self.descricao, self.banco)

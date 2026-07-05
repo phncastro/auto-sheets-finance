@@ -29,7 +29,7 @@
 '''
 
 from app.models import Transacao
-from app.core.enums import TipoTransacao, Banco
+from app.core.enums import TipoTransacao, Banco, RegexTiposSicoob, RegexDadosSicoob
 import re
 
 class SicoobParser:
@@ -41,53 +41,41 @@ class SicoobParser:
         self.banco = banco
 
     def identificar_tipo(self, transação):
-
-        regex_tipo_credito = r"compra\s+crédito\s+aprovada"
-        regex_tipo_debito = r"compra\s+débito\s+aprovada"
-        regex_tipo_pix_enviado = r"Pix\s+de\s+R\$.*?foi\s+enviado"
-        regex_tipo_pix_recebido = r"Pix\s+de\s+R\$.*?foi\s+recebido"
         
-        if re.search(regex_tipo_credito, transação):
+        if re.search(RegexTiposSicoob.CREDITO, transação):
             return TipoTransacao.CREDITO
-        elif re.search(regex_tipo_debito, transação):
+        elif re.search(RegexTiposSicoob.DEBITO, transação):
             return TipoTransacao.DEBITO
-        elif re.search(regex_tipo_pix_enviado, transação):
+        elif re.search(RegexTiposSicoob.PIX_ENVIADO, transação):
             return TipoTransacao.PIX_ENVIADO
-        elif re.search(regex_tipo_pix_recebido, transação):
+        elif re.search(RegexTiposSicoob.PIX_RECEBIDO, transação):
             return TipoTransacao.PIX_RECEBIDO
 
-        return 'Error: Tipo não identificado'
+        return 'Error: Tipo não identificado'                                          # /// TRATAR NOTIFICAÇÕES DIFERENTES
     
 
     def realizar_parse(self, transação):
 
-        regex_valor = r"valor\s+R\$\s*(\d+(?:\.\d{3})*,\d{2})"
-        regex_estabelecimento = r"Local:\s*(.+)"
-
-        regex_valor_pix = r"Pix\s+de\s+R\$\s*(\d+(?:\.\d{3})*,\d{2})"
-        regex_destinatario = r"foi\s+enviado\s+para\s+(.+?),\s*CPF"
-        regex_remetente = r"foi\s+recebido\s+de\s+(.+?),\s*CPF"
-
         self.tipo = self.identificar_tipo()
 
         if self.tipo == TipoTransacao.CREDITO:
-            self.valor = re.search(regex_valor, transação).group()                      # /// TRATAR None
-            self.descricao = re.search(regex_estabelecimento, transação).group()        # /// TRATAR None
+            self.valor = re.search(RegexDadosSicoob.VALOR_CARTAO, transação).group()                      # /// TRATAR None
+            self.descricao = re.search(RegexDadosSicoob.ESTABELECIMENTO, transação).group()        # /// TRATAR None
             self.banco = Banco.SICOOB
 
         elif self.tipo == TipoTransacao.DEBITO:
-            self.valor = re.search(regex_valor, transação).group()                      # /// TRATAR None
-            self.descricao = re.search(regex_estabelecimento, transação).group()        # /// TRATAR None
+            self.valor = re.search(RegexDadosSicoob.VALOR_CARTAO, transação).group()                      # /// TRATAR None
+            self.descricao = re.search(RegexDadosSicoob.ESTABELECIMENTO, transação).group()        # /// TRATAR None
             self.banco = Banco.SICOOB
 
         elif self.tipo == TipoTransacao.PIX_ENVIADO:
-            self.valor = re.search(regex_valor_pix, transação).group()                  # /// TRATAR None
-            self.descricao = re.search(regex_destinatario, transação).group()           # /// TRATAR None
+            self.valor = re.search(RegexDadosSicoob.VALOR_PIX, transação).group()                  # /// TRATAR None
+            self.descricao = re.search(RegexDadosSicoob.DESTINATARIO, transação).group()           # /// TRATAR None
             self.banco = Banco.SICOOB
 
         elif self.tipo == TipoTransacao.PIX_RECEBIDO:
-            self.valor = re.search(regex_valor_pix, transação).group()                  # /// TRATAR None
-            self.descricao = re.search(regex_remetente, transação).group()              # /// TRATAR None
+            self.valor = re.search(RegexDadosSicoob.VALOR_PIX, transação).group()                  # /// TRATAR None
+            self.descricao = re.search(RegexDadosSicoob.REMETENTE, transação).group()              # /// TRATAR None
             self.banco = Banco.SICOOB
 
         transacao = Transacao(self.tipo, self.valor, self.descricao, self.banco)
