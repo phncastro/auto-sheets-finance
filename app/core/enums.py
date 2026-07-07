@@ -30,7 +30,7 @@ class RegexTiposBradesco(Enum):
 
 class RegexDadosBradesco(Enum):
     VALOR_CARTAO = r"VALOR\s+R\$\s*(\d+(?:\.\d{3})*,\d{2})"
-    ESTABELECIMENTO = r"VALOR\s+R\$\s*\d+(?:\.\d{3})*,\d{2}\s*(.*?)\s*LIMITE\s+DISP"
+    ESTABELECIMENTO = r"VALOR\s+R\$\s*\d+(?:\.\d{3})*,\d{2}\s*(.*?)\s{2,}"
     VALOR_PIX = r"Pix\s+de\s+R\$\s*(\d+(?:\.\d{3})*,\d{2})"
     DESTINATARIO = r"para\s+a\s+conta\s+de\s+(.*?),\s+na\s+Instituição"
     REMETENTE = r"para\s+a\s+conta\s+de\s+(.*?),\s+da\s+instituição"
