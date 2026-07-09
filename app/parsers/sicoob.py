@@ -1,61 +1,60 @@
 from app.core.transaction import Transacao
 from app.core.enums import TipoTransacao, Banco, RegexTiposSicoob, RegexDadosSicoob
 from app.core.regex import extrair
-import re
 
 class SicoobParser:
 
-    def identificar_tipo(self, transação):
+    def identificar_tipo(self, transacao) -> TipoTransacao:
         
         if extrair(
             RegexTiposSicoob.CREDITO.value,
-            transação
+            transacao
             ):
             return TipoTransacao.CREDITO
         
         elif extrair(
             RegexTiposSicoob.DEBITO.value,
-            transação
+            transacao
             ):
             return TipoTransacao.DEBITO
         
         elif extrair(
             RegexTiposSicoob.PIX_ENVIADO.value,
-            transação
+            transacao
             ):
             return TipoTransacao.PIX_ENVIADO
         
         elif extrair(
             RegexTiposSicoob.PIX_RECEBIDO.value,
-            transação
+            transacao
             ):
             return TipoTransacao.PIX_RECEBIDO
 
         return None
     
 
-    def realizar_parse(self, transação):
+    def realizar_parse(self, transacao) -> Transacao:
 
-        tipo = self.identificar_tipo(transação)
+        tipo = self.identificar_tipo(transacao)
 
         if tipo == TipoTransacao.CREDITO:
-            valor = extrair(RegexDadosSicoob.VALOR_CARTAO.value, transação).group(1)
-            descricao = extrair(RegexDadosSicoob.ESTABELECIMENTO.value, transação).group(1)
+            valor = extrair(RegexDadosSicoob.VALOR_CARTAO.value, transacao)
+            descricao = extrair(RegexDadosSicoob.ESTABELECIMENTO.value, transacao)
             banco = Banco.SICOOB
 
         elif tipo == TipoTransacao.DEBITO:
-            valor = extrair(RegexDadosSicoob.VALOR_CARTAO.value, transação).group(1)
-            descricao = extrair(RegexDadosSicoob.ESTABELECIMENTO.value, transação).group(1)
+            valor = extrair(RegexDadosSicoob.VALOR_CARTAO.value, transacao)
+            descricao = extrair(RegexDadosSicoob.ESTABELECIMENTO.value, transacao)
             banco = Banco.SICOOB
 
         elif tipo == TipoTransacao.PIX_ENVIADO:
-            valor = extrair(RegexDadosSicoob.VALOR_PIX.value, transação).group(1)
-            descricao = extrair(RegexDadosSicoob.DESTINATARIO.value, transação).group(1)
+            valor = extrair(RegexDadosSicoob.VALOR_PIX.value, transacao)
+            descricao = extrair(RegexDadosSicoob.DESTINATARIO.value, transacao)
             banco = Banco.SICOOB
 
         elif tipo == TipoTransacao.PIX_RECEBIDO:
-            valor = extrair(RegexDadosSicoob.VALOR_PIX.value, transação).group(1)
-            descricao = extrair(RegexDadosSicoob.REMETENTE.value, transação).group(1)
+            valor = extrair(RegexDadosSicoob.VALOR_PIX.value, transacao)
+            descricao = extrair(RegexDadosSicoob.REMETENTE.value, transacao)
             banco = Banco.SICOOB
 
         else:
