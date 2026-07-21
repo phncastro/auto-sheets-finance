@@ -1,6 +1,7 @@
 from app.core.transaction import Transacao
 from app.core.enums import TipoTransacao, Banco, RegexTiposBradesco, RegexDadosBradesco
-from app.core.regex import extrair
+from app.utils.regex import extrair
+from app.utils.money import parse_money
 
 class BradescoParser:
 
@@ -16,7 +17,7 @@ class BradescoParser:
             RegexTiposBradesco.PIX_ENVIADO.value,
             transacao
             ):
-           return TipoTransacao.PIX_ENVIADO
+            return TipoTransacao.PIX_ENVIADO
         
         elif extrair(
             RegexTiposBradesco.PIX_RECEBIDO.value,
@@ -28,7 +29,7 @@ class BradescoParser:
 
 
     def realizar_parse(self, transacao) -> Transacao:
-
+        
         tipo = self.identificar_tipo(transacao)
 
         if tipo == TipoTransacao.CREDITO:
@@ -53,9 +54,9 @@ class BradescoParser:
             return None
         
         return Transacao(
+            banco,
             tipo,
-            valor,
-            descricao,
-            banco
+            parse_money(valor),
+            descricao
         )
 

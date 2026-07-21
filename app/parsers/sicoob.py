@@ -1,6 +1,7 @@
 from app.core.transaction import Transacao
 from app.core.enums import TipoTransacao, Banco, RegexTiposSicoob, RegexDadosSicoob
-from app.core.regex import extrair
+from app.utils.regex import extrair
+from app.utils.money import parse_money
 
 class SicoobParser:
 
@@ -61,10 +62,10 @@ class SicoobParser:
             return None
                 
         return Transacao(
+            banco,
             tipo,
-            valor,
-            descricao,
-            banco
+            parse_money(valor),
+            descricao
         )
 
   
