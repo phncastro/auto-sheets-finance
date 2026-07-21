@@ -2,7 +2,7 @@
 
 Aplicação desenvolvida em **Python + Django** para automatizar o registro de transações financeiras a partir de notificações do celular.
 
-A aplicação recebe notificações enviadas pelo **Tasker**, identifica automaticamente o banco e o tipo da transação, extrai as informações utilizando **Regex** e registra tudo em uma planilha do **Google Sheets**.
+A aplicação recebe notificações enviadas pelo **Tasker**(app mobile), identifica automaticamente o banco e o tipo da transação, extrai as informações utilizando **Regex** e registra tudo em uma planilha do **Google Sheets**.
 
 ## ✨ Funcionalidades
 
@@ -107,7 +107,7 @@ pytest
 
 ## 📖 Motivação
 
-Este projeto nasceu para eliminar o lançamento manual de despesas em planilhas.
+Este projeto nasceu para eliminar o lançamento manual de despesas na minha planilha financeira.
 
 Sempre que uma nova transação é realizada, basta a notificação chegar ao celular para que todo o processo de interpretação e registro aconteça automaticamente.
 
