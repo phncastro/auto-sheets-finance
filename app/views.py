@@ -1,10 +1,9 @@
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from app.models import Transacao
 from app.services.transaction_service import TransactionService
+from app.services.sheets_service import GoogleSheetsService
 from app.core.notification import Notificacao
-from dataclasses import asdict
 
 @csrf_exempt
 def receber_transacao(request):
@@ -16,10 +15,11 @@ def receber_transacao(request):
             data['texto']
         )
         transacao = TransactionService.processar(notificacao)
+        google_service = GoogleSheetsService()
+        google_service.adicionar(transacao)
 
         return JsonResponse({
-            "status": "ok",
-            "transacao": asdict(transacao)
+            "status": "ok"
         })
 
     return JsonResponse({"erro": "metodo inválido"})
