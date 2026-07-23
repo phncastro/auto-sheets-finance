@@ -31,24 +31,19 @@ class BradescoParser:
     def realizar_parse(self, transacao) -> Transacao:
         
         tipo = self.identificar_tipo(transacao)
-
+        banco = Banco.BRADESCO
+        
         if tipo == TipoTransacao.CREDITO:
-
             valor = extrair(RegexDadosBradesco.VALOR_CARTAO.value, transacao)
             descricao = extrair(RegexDadosBradesco.ESTABELECIMENTO.value, transacao)
-            banco = Banco.BRADESCO
 
         elif tipo == TipoTransacao.PIX_ENVIADO:
-
             valor = extrair(RegexDadosBradesco.VALOR_PIX.value, transacao)
             descricao = extrair(RegexDadosBradesco.DESTINATARIO.value, transacao)
-            banco = Banco.BRADESCO
 
         elif tipo == TipoTransacao.PIX_RECEBIDO:
-
             valor = extrair(RegexDadosBradesco.VALOR_PIX.value, transacao)
             descricao = extrair(RegexDadosBradesco.REMETENTE.value, transacao)
-            banco = Banco.BRADESCO
 
         else:
             return None

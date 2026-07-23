@@ -14,14 +14,14 @@ class RegexTiposSicoob(Enum):
     CREDITO = r"compra\s+crédito\s+aprovada"
     DEBITO = r"compra\s+débito\s+aprovada"
     PIX_ENVIADO = r"Pix\s+de\s+R\$.*?foi\s+enviado"
-    PIX_RECEBIDO = r"Pix\s+de\s+R\$.*?foi\s+recebido"
+    PIX_RECEBIDO = r"Pix\s+de\s+R\$.*?\s+recebido\s+de"
 
 class RegexDadosSicoob(Enum):
     VALOR_CARTAO = r"valor\s+R\$\s*(\d+(?:\.\d{3})*,\d{2})"
     ESTABELECIMENTO = r"Local:\s*(.+)"
     VALOR_PIX = r"Pix\s+de\s+R\$\s*(\d+(?:\.\d{3})*,\d{2})"
     DESTINATARIO = r"foi\s+enviado\s+para\s+(.+?),\s*CPF"
-    REMETENTE = r"foi\s+recebido\s+de\s+(.+?),\s*CPF"
+    REMETENTE = r"Pix\s+de\s+R\$\s*\d+(?:\.\d{3})*,\d{2}\s+recebido\s+de\s+(.+?),\s*CPF"
 
 class RegexTiposBradesco(Enum):
     CREDITO = r"COMPRA\s+APROVADA"

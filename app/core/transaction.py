@@ -13,7 +13,7 @@ class Transacao:
 
     def linha(self):
         return [
-            self.data.isoformat(),
+            self.data.strftime("%d/%m/%Y"),
             self.banco.value,
             self.tipo.value,
             str(self.valor),

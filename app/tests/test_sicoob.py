@@ -36,7 +36,7 @@ def test_pix_enviado():
 
 def test_pix_recebido():
 
-    notificacao = """Pix de R$500,00 foi recebido de João da Silva, CPF ***.999.111-**."""
+    notificacao = """Pix de R$500,00 recebido de João da Silva, CPF ***.999.111-**."""
 
     parser = SicoobParser()
     transacao = parser.realizar_parse(notificacao)

@@ -1,20 +1,42 @@
 # Ambiente virtual
 venv/
+.venv/
 
 # Python
 __pycache__/
 *.py[cod]
 *.pyo
+.pytest_cache/
+.coverage
+htmlcov/
 
 # Django
 db.sqlite3
+media/
+staticfiles/
 
-# VS Code
+# VSCode
 .vscode/
 
-# Variáveis de ambiente
+# Variáveis
 .env
 .env.*
 
 # Logs
 *.log
+
+# Configurações locais
+config/*.json
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# IDEs
+.idea/
+
+# mypy
+.mypy_cache/
+
+# Ruff
+.ruff_cache/

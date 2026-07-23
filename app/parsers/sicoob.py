@@ -37,26 +37,23 @@ class SicoobParser:
     def realizar_parse(self, transacao) -> Transacao:
 
         tipo = self.identificar_tipo(transacao)
+        banco = Banco.SICOOB
 
         if tipo == TipoTransacao.CREDITO:
             valor = extrair(RegexDadosSicoob.VALOR_CARTAO.value, transacao)
             descricao = extrair(RegexDadosSicoob.ESTABELECIMENTO.value, transacao)
-            banco = Banco.SICOOB
 
         elif tipo == TipoTransacao.DEBITO:
             valor = extrair(RegexDadosSicoob.VALOR_CARTAO.value, transacao)
             descricao = extrair(RegexDadosSicoob.ESTABELECIMENTO.value, transacao)
-            banco = Banco.SICOOB
 
         elif tipo == TipoTransacao.PIX_ENVIADO:
             valor = extrair(RegexDadosSicoob.VALOR_PIX.value, transacao)
             descricao = extrair(RegexDadosSicoob.DESTINATARIO.value, transacao)
-            banco = Banco.SICOOB
 
         elif tipo == TipoTransacao.PIX_RECEBIDO:
             valor = extrair(RegexDadosSicoob.VALOR_PIX.value, transacao)
             descricao = extrair(RegexDadosSicoob.REMETENTE.value, transacao)
-            banco = Banco.SICOOB
 
         else:
             return None
@@ -65,7 +62,5 @@ class SicoobParser:
             banco,
             tipo,
             parse_money(valor),
-            descricao
+            descricao.upper()
         )
-
-  
